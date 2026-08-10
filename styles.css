@@ -1,0 +1,84 @@
+/* Basic responsive calculator styling */
+:root{
+  --bg: #f3f4f6;
+  --panel: #ffffff;
+  --accent: #4f46e5;
+  --btn: #e6e7ff;
+  --btn-operator: #f3f4f6;
+  --text: #111827;
+  --muted: #6b7280;
+  font-size: 16px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+.calculator{
+  width:340px;
+  max-width:100%;
+  background:var(--panel);
+  border-radius:12px;
+  box-shadow:0 6px 20px rgba(16,24,40,0.08);
+  padding:18px;
+}
+
+.display{
+  background:#0f172a;
+  color:#fff;
+  font-size:32px;
+  text-align:right;
+  padding:14px 16px;
+  border-radius:8px;
+  margin-bottom:12px;
+  min-height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  word-break:break-all;
+}
+
+.buttons{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.btn{
+  background:var(--btn);
+  border:0;
+  padding:14px;
+  border-radius:8px;
+  font-size:18px;
+  cursor:pointer;
+  box-shadow:inset 0 -2px 0 rgba(0,0,0,0.04);
+  transition:transform .06s ease, box-shadow .06s ease;
+}
+
+.btn:active{transform:translateY(1px)}
+.btn.function{background:#fef3c7}
+.btn.operator{background:var(--btn-operator)}
+.btn.equals{
+  background:var(--accent);
+  color:#fff;
+  grid-row:span 2;
+  align-self:stretch;
+  box-shadow:0 6px 16px rgba(79,70,229,0.18);
+}
+
+.btn[aria-pressed="true"]{outline:2px solid rgba(79,70,229,0.15)}
+
+@media (max-width:420px){
+  .calculator{width:100%}
+  .display{font-size:28px}
+  .btn{padding:12px;font-size:16px}
+}
