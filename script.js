@@ -1,8 +1,9 @@
-// Calculator logic with keyboard support
+// Calculator UI with backend server integration
 (() => {
   const display = document.getElementById('display');
   const buttons = document.querySelectorAll('.btn');
   let expr = '';
+  const API_URL = 'http://localhost:3000/api/calculate';
 
   const isOperator = (ch) => /^[+\-*/%]$/.test(ch);
 
@@ -46,20 +47,40 @@
     updateDisplay(expr);
   }
 
-  function evaluateExpr() {
+  async function evaluateExpr() {
     if (expr === '') return;
-    // rudimentary sanitization: allow digits, operators, parentheses, dot, whitespace
+
+    // Rudimentary sanitization: allow digits, operators, parentheses, dot, whitespace
     if (!/^[0-9+\-*/%().\s]+$/.test(expr)) {
       updateDisplay('Error');
       return;
     }
+
     try {
-      // Use Function to evaluate safely in global scope
-      // Replace any repeated operators like `--` safely handled by JS
-      const result = Function('"use strict"; return (' + expr + ')')();
-      expr = String(result);
-      updateDisplay(expr);
-    } catch (e) {
+      // Send the expression to the backend server
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ expression: expr })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Success: display the result
+        expr = String(data.result);
+        updateDisplay(expr);
+      } else {
+        // Error response from server
+        console.error('Server error:', data.message);
+        updateDisplay('Error');
+        expr = '';
+      }
+    } catch (error) {
+      // Network or other error
+      console.error('Calculation error:', error);
       updateDisplay('Error');
       expr = '';
     }
@@ -107,6 +128,16 @@
     }
   });
 
-  // initialize
+  // Initialize and check server connection
   updateDisplay('');
+  
+  // Check if server is running
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ expression: '0' })
+  }).catch(error => {
+    console.warn('Calculator server is not running. Make sure to run "npm start" in the project directory.');
+    console.warn('Fallback to local calculation mode.');
+  });
 })();
