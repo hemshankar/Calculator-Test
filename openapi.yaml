@@ -1,0 +1,185 @@
+openapi: 3.0.0
+info:
+  title: Calculator API
+  description: A simple REST API for performing mathematical calculations
+  version: 1.0.0
+  contact:
+    name: Calculator Project
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server (example)
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the calculator server
+      operationId: getHealth
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  message:
+                    type: string
+                    example: "Calculator server is running"
+
+  /api/calculate:
+    post:
+      summary: Calculate a mathematical expression
+      description: |
+        Evaluates a mathematical expression and returns the result.
+        Supports basic arithmetic operations: +, -, *, /, %, and parentheses.
+      operationId: calculateExpression
+      tags:
+        - Calculator
+      requestBody:
+        description: Mathematical expression to evaluate
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - expression
+              properties:
+                expression:
+                  type: string
+                  description: Mathematical expression (e.g., "2+2", "(10-5)*3")
+                  example: "2+2"
+      responses:
+        '200':
+          description: Calculation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  expression:
+                    type: string
+                    description: The input expression
+                    example: "2+2"
+                  result:
+                    type: number
+                    description: The calculated result
+                    example: 4
+        '400':
+          description: Invalid expression or calculation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error type
+                    example: "Invalid expression"
+                  message:
+                    type: string
+                    description: Detailed error message
+                    example: "Expression contains invalid characters"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+                  message:
+                    type: string
+                    example: "An unexpected error occurred"
+
+  /api/docs:
+    get:
+      summary: API documentation
+      description: Returns API documentation and available endpoints
+      operationId: getDocumentation
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: API documentation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  version:
+                    type: string
+                  description:
+                    type: string
+                  baseUrl:
+                    type: string
+                  endpoints:
+                    type: object
+
+  /openapi.yaml:
+    get:
+      summary: OpenAPI specification
+      description: Returns the OpenAPI specification for this API
+      operationId: getOpenAPISpec
+      tags:
+        - Documentation
+      responses:
+        '200':
+          description: OpenAPI specification
+          content:
+            application/yaml:
+              schema:
+                type: object
+
+components:
+  schemas:
+    CalculateRequest:
+      type: object
+      required:
+        - expression
+      properties:
+        expression:
+          type: string
+          description: Mathematical expression
+          example: "10 * 2 + 5"
+
+    CalculateResponse:
+      type: object
+      properties:
+        expression:
+          type: string
+          description: The input expression
+        result:
+          type: number
+          description: The calculated result
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error type
+        message:
+          type: string
+          description: Detailed error message
+
+tags:
+  - name: Health
+    description: Server health endpoints
+  - name: Calculator
+    description: Calculator operations
+  - name: Documentation
+    description: API documentation endpoints
